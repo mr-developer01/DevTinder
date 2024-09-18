@@ -2,6 +2,7 @@ const express = require("express")
 const app = express()
 
 app.use("/", (req, res) => {
+    // This callback function is request handler
     res.send("Hello from server!!");
 })
 
