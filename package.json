@@ -1,0 +1,21 @@
+{
+  "name": "devtinder",
+  "version": "1.0.0",
+  "description": "tinder for devs",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "keywords": [
+    "node",
+    "JavaScript",
+    "Express",
+    "Mongoose"
+  ],
+  "author": "Rahul",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}
