@@ -1,15 +1,18 @@
-const express = require("express")
-const app = express()
+const express = require("express");
+const app = express();
+const { connectDb } = require("./config/database");
 
-app.use("/", (req, res) => {
-    // This callback function is request handler
-    res.send("Hello from server!!");
-})
+app.get("/users", (req, res) => {
+  res.send("Hello!!!");
+});
 
-app.use("/test", (req, res) => {
-    res.send("Hello from test route!!");
-})
-
-app.listen(3000, () => {
-    console.log("Server is running on port 3000...");
-})
+connectDb()
+  .then(() => {
+    console.log("Db is connected");
+    app.listen(3000, () => {
+      console.log("Server is running on port 3000...");
+    });
+  })
+  .catch((err) => {
+    console.error("Db is not connected!!");
+  });
