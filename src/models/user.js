@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
 
 const userSchema = new mongoose.Schema(
   {
@@ -20,20 +21,31 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
       trim: true,
-      match: [
-        /^[a-zA-Z0-9_.±]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9.]+$/,
-        "Please fill a valid email address",
-      ],
+      // match: [
+      //   /^[a-zA-Z0-9_.±]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9.]+$/,
+      //   "Please fill a valid email address",
+      // ],
       maxLength: [70, "length is exceding to max requre char!!"],
+      validate(val) {
+        if (!validator.isEmail(val)) {
+          throw new Error("Envalid email address: " + val);
+        }
+      },
     },
     password: {
       type: String,
       required: true,
       trim: true,
-      match: [
-        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
-        "Please fill a valid email address",
-      ],
+      maxLength: [10, "length is exceding to max require char!!"],
+      // match: [
+      //   /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
+      //   "Please fill a valid email address",
+      // ],
+      validate(val) {
+        if (!validator.isStrongPassword(val)) {
+          throw new Error(val + "Not a strong password");
+        }
+      },
     },
     age: {
       type: Number,
@@ -49,6 +61,11 @@ const userSchema = new mongoose.Schema(
     },
     photoUrl: {
       type: String,
+      validate(val) {
+        if (!validator.isURL(val)) {
+          throw new Error("Envalid email address: " + val);
+        }
+      },
     },
     about: {
       type: String,

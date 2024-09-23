@@ -80,9 +80,12 @@ app.delete("/user", async (req, res) => {
 });
 
 app.patch("/user/:userId", async (req, res) => {
-  const userId = req.params?.userId;
-  console.log(userId);
   try {
+    const userId = req.params?.userId;
+
+    const findUser = await userModel.findById({ _id: userId });
+    if (!findUser) return res.status(400).send("No such user find!!");
+
     const data = req.body;
 
     if (data?.skills.length > 10)
