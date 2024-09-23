@@ -2,11 +2,44 @@ const express = require("express");
 const app = express();
 const { connectDb } = require("./config/database");
 const userModel = require("./models/user");
+const { sociallyRestrictedSkills } = require("./utils/user");
 
 app.use(express.json());
 
 app.post("/signup", async (req, res) => {
   try {
+    const data = req.body;
+
+    if (data?.skills.length > 10)
+      return res.status(400).send("Skills must be less than 8");
+
+    const userSkill = data?.skills;
+    userSkill.forEach((skill) => {
+      const isSkillPresent = sociallyRestrictedSkills.includes(
+        skill.toLowerCase()
+      );
+      if (isSkillPresent) throw new Error(`You can't add skills like ${skill}`);
+    });
+
+    const allowedUpdates = [
+      "firstName",
+      "lastName",
+      "emailId",
+      "about",
+      "skills",
+      "age",
+      "gender",
+      "password",
+    ];
+
+    const isAllowedUpdates = Object.keys(data).every((k) =>
+      allowedUpdates.includes(k)
+    );
+    console.log(isAllowedUpdates);
+
+    if (!isAllowedUpdates)
+      return res.status(400).send("Some fields can't allow to update!");
+
     const user = await userModel.create(req.body);
     res.send("User added successfully");
   } catch (error) {
@@ -46,24 +79,47 @@ app.delete("/user", async (req, res) => {
   }
 });
 
-app.patch("/user", async (req, res) => {
-  const { userId } = req.body;
-  const { firstName, emailId, skills } = req.body;
-
+app.patch("/user/:userId", async (req, res) => {
+  const userId = req.params?.userId;
+  console.log(userId);
   try {
-    const findUser = await userModel.findById(userId);
-    console.log(findUser);
-    
-    if (findUser) {
-      const user = await userModel.findByIdAndUpdate(
-        { _id: userId },
-        { firstName, emailId, skills },
-        { returnDocument: "after", runValidators: true }
+    const data = req.body;
+
+    if (data?.skills.length > 10)
+      return res.status(400).send("Skills must be less than 8");
+
+    const userSkill = data?.skills;
+    userSkill.forEach((skill) => {
+      const isSkillPresent = sociallyRestrictedSkills.includes(
+        skill.toLowerCase()
       );
-      res.send("Updated...");
-    }else{
-      return res.send("No such user found!!")
-    }
+      if (isSkillPresent) throw new Error(`You can't add skills like ${skill}`);
+    });
+
+    const allowedUpdates = [
+      "firstName",
+      "lastName",
+      "skills",
+      "age",
+      "gender",
+      "about",
+      "password",
+      "photoUrl",
+    ];
+
+    const isAllowedUpdates = Object.keys(data).every((k) =>
+      allowedUpdates.includes(k)
+    );
+    console.log(isAllowedUpdates);
+
+    if (!isAllowedUpdates)
+      return res.status(400).send("Some fields can't allow to update!");
+
+    const user = await userModel.findByIdAndUpdate({ _id: userId }, data, {
+      returnDocument: "after",
+      runValidators: true,
+    });
+    res.status(200).send("Updated...");
   } catch (error) {
     res.status(400).send("User not found: " + error.message);
   }
@@ -77,5 +133,5 @@ connectDb()
     });
   })
   .catch((err) => {
-    console.error("Db is not connected!!");
+    console.error("Db is not connected!! : " + err.message);
   });

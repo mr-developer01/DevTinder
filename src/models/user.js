@@ -29,6 +29,7 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
+      trim: true,
       match: [
         /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
         "Please fill a valid email address",
