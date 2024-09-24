@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      maxLength: [10, "length is exceding to max require char!!"],
+      maxLength: [70, "length is exceding to max require char!!"],
       // match: [
       //   /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
       //   "Please fill a valid email address",

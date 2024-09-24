@@ -3,47 +3,58 @@ const app = express();
 const { connectDb } = require("./config/database");
 const userModel = require("./models/user");
 const { sociallyRestrictedSkills } = require("./utils/user");
+const { signupValidation } = require("./utils/signupValidation");
+const { updateValidation } = require("./utils/updateValidation");
+const bcrypt = require("bcrypt");
 
 app.use(express.json());
 
+// creating a user
 app.post("/signup", async (req, res) => {
   try {
-    const data = req.body;
+    const { firstName, lastName, emailId, password, skills, age, gender } =
+      req.body;
+    // validation of data:--
+    signupValidation(req, sociallyRestrictedSkills);
 
-    if (data?.skills.length > 10)
-      return res.status(400).send("Skills must be less than 8");
+    // Encrypt the password
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    const userSkill = data?.skills;
-    userSkill.forEach((skill) => {
-      const isSkillPresent = sociallyRestrictedSkills.includes(
-        skill.toLowerCase()
-      );
-      if (isSkillPresent) throw new Error(`You can't add skills like ${skill}`);
+    await userModel.create({
+      firstName,
+      lastName,
+      emailId,
+      password: hashedPassword,
+      skills,
+      age,
+      gender,
     });
-
-    const allowedUpdates = [
-      "firstName",
-      "lastName",
-      "emailId",
-      "about",
-      "skills",
-      "age",
-      "gender",
-      "password",
-    ];
-
-    const isAllowedUpdates = Object.keys(data).every((k) =>
-      allowedUpdates.includes(k)
-    );
-    console.log(isAllowedUpdates);
-
-    if (!isAllowedUpdates)
-      return res.status(400).send("Some fields can't allow to update!");
-
-    const user = await userModel.create(req.body);
     res.send("User added successfully");
   } catch (error) {
-    res.status(400).send("Error saving the user: " + error.message);
+    res.status(400).send("ERROR: " + error.message);
+  }
+});
+
+// login a user
+app.post("/login", async (req, res) => {
+  try {
+    const { emailId, password } = req.body;
+
+    const user = await userModel.findOne({ emailId });
+
+    if (!user) {
+      throw new Error("Invalid credentials.");
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (isPasswordValid) {
+      res.send("Login successfully!");
+    } else {
+      throw new Error("Invalid credentials.");
+    }
+  } catch (error) {
+    res.status(400).send("ERROR : " + error.message)
   }
 });
 
@@ -88,35 +99,8 @@ app.patch("/user/:userId", async (req, res) => {
 
     const data = req.body;
 
-    if (data?.skills.length > 10)
-      return res.status(400).send("Skills must be less than 8");
-
-    const userSkill = data?.skills;
-    userSkill.forEach((skill) => {
-      const isSkillPresent = sociallyRestrictedSkills.includes(
-        skill.toLowerCase()
-      );
-      if (isSkillPresent) throw new Error(`You can't add skills like ${skill}`);
-    });
-
-    const allowedUpdates = [
-      "firstName",
-      "lastName",
-      "skills",
-      "age",
-      "gender",
-      "about",
-      "password",
-      "photoUrl",
-    ];
-
-    const isAllowedUpdates = Object.keys(data).every((k) =>
-      allowedUpdates.includes(k)
-    );
-    console.log(isAllowedUpdates);
-
-    if (!isAllowedUpdates)
-      return res.status(400).send("Some fields can't allow to update!");
+    // validating data from req.body:--
+    updateValidation(data, sociallyRestrictedSkills);
 
     const user = await userModel.findByIdAndUpdate({ _id: userId }, data, {
       returnDocument: "after",
