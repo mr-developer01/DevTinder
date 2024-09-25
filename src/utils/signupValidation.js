@@ -1,5 +1,6 @@
 const validator = require("validator")
-module.exports.signupValidation = (req, sociallyRestrictedSkills) => {
+const {sociallyRestrictedSkills} = require("../utils/user")
+module.exports.signupValidation = (req) => {
 
   const { firstName, lastName, emailId, password, skills, age, gender } = req.body;
   console.log(req.body)

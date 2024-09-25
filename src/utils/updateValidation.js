@@ -1,6 +1,7 @@
 const { json } = require("express");
+const {sociallyRestrictedSkills} = require("../utils/user")
 
-module.exports.updateValidation = (data, sociallyRestrictedSkills) => {
+module.exports.updateValidation = (data) => {
     if (data?.skills.length > 10)
       throw new Error("Skills must be less than 8");
   
