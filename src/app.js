@@ -2,11 +2,8 @@ const express = require("express");
 const app = express();
 const { connectDb } = require("./config/database");
 const userModel = require("./models/user");
-const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
-const jwt = require("jsonwebtoken");
 const { signupValidation } = require("./utils/signupValidation");
-const { updateValidation } = require("./utils/updateValidation");
 const { userAuth } = require("./middlewares/userAuth");
 
 app.use(express.json());
@@ -49,14 +46,14 @@ app.post("/login", async (req, res) => {
       throw new Error("Invalid credentials.");
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await user.validatePassword(password);
 
     if (isPasswordValid) {
       // create a jWT token
-      const token = await jwt.sign({ _id: user._id }, "DEV@Tinder$3636", { expiresIn: '1d' });
+      const token = await user.getJWT();
 
       // adding token to cookie
-      res.cookie("token", token,  { maxAge: 60000 * 60 * 24 * 7 });
+      res.cookie("token", token, { maxAge: 60000 * 60 * 24 * 7 });
       res.send("Login successfully!");
     } else {
       throw new Error("Invalid credentials.");
@@ -70,6 +67,12 @@ app.get("/profile", userAuth, async (req, res) => {
   const user = req.user;
 
   res.send(user);
+});
+
+app.get("/sendConnectionRequest", userAuth, async (req, res) => {
+  const user = req.user;
+
+  res.send(user.firstName + " sent connection request!");
 });
 
 app.get("/user", async (req, res) => {
@@ -99,35 +102,6 @@ app.delete("/user", async (req, res) => {
     const user = await userModel.findOneAndDelete({ _id: userId });
     if (user) return res.send("User deleted!!");
     res.status(400).send("user not exists!!");
-  } catch (error) {
-    res.status(400).send("User not found: " + error.message);
-  }
-});
-
-app.patch("/user/:userId", async (req, res) => {
-  try {
-    const userId = req.params?.userId;
-
-    const data = req.body;
-    // validating data from req.body:--
-    updateValidation(data);
-
-    const findUser = await userModel.findById({ _id: userId });
-    if (!findUser) return res.status(400).send("No such user find!!");
-
-    const { firstName, lastName, password, skills, photoUrl } = data;
-
-    const newPass = await bcrypt.hash(password, 10);
-
-    const user = await userModel.findByIdAndUpdate(
-      { _id: userId },
-      { firstName, lastName, password: newPass, skills, photoUrl },
-      {
-        returnDocument: "after",
-        runValidators: true,
-      }
-    );
-    res.status(200).send("Updated...");
   } catch (error) {
     res.status(400).send("User not found: " + error.message);
   }
