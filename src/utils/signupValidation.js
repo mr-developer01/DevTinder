@@ -1,9 +1,8 @@
-const validator = require("validator")
-const {sociallyRestrictedSkills} = require("../utils/user")
+const validator = require("validator");
+const { sociallyRestrictedSkills } = require("./mockData");
 module.exports.signupValidation = (req) => {
-
-  const { firstName, lastName, emailId, password, skills, age, gender } = req.body;
-  console.log(req.body)
+  const { firstName, lastName, emailId, password, skills, age, gender } =
+    req.body;
 
   if (!firstName || firstName.trim() === "")
     throw new Error(
@@ -18,7 +17,11 @@ module.exports.signupValidation = (req) => {
   if (!emailId || emailId.trim() === "" || !validator.isEmail(emailId))
     throw new Error("Please provide a valid email address.");
 
-  if (!password || password.trim() === "" || !validator.isStrongPassword(password))
+  if (
+    !password ||
+    password.trim() === "" ||
+    !validator.isStrongPassword(password)
+  )
     throw new Error(
       "Please provide a valid password with the required strength."
     );
@@ -40,5 +43,4 @@ module.exports.signupValidation = (req) => {
     );
     if (isSkillPresent) throw new Error(`You can't add skills like ${skill}`);
   });
-
 };

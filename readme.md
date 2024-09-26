@@ -4,3 +4,4 @@
 4. bcrypt (for password incription)
 5. cookie-parser (for reading cookie, no need of cookie-parser for saving cookie on browser)
 6. JWT - JSON Web Token (contains header, payload and verify signature)
+7. add userSchema.method (schema methods)
