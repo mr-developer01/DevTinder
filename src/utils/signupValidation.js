@@ -1,5 +1,6 @@
 const validator = require("validator");
 const { sociallyRestrictedSkills } = require("./mockData");
+
 module.exports.signupValidation = (req) => {
   const { firstName, lastName, emailId, password, skills, age, gender } =
     req.body;
@@ -43,4 +44,33 @@ module.exports.signupValidation = (req) => {
     );
     if (isSkillPresent) throw new Error(`You can't add skills like ${skill}`);
   });
+};
+
+module.exports.profileUpdateValidation = (req) => {
+  const data = req.body;
+
+  if (data?.skills.length > 10) throw new Error("Skills must be less than 10");
+
+  const userSkill = data?.skills;
+  userSkill.forEach((skill) => {
+    const isSkillPresent = sociallyRestrictedSkills.includes(
+      skill.toLowerCase()
+    );
+    if (isSkillPresent) throw new Error(`You can't add skills like ${skill}`);
+  });
+
+  const allowedUpdates = [
+    "firstName",
+    "lastName",
+    "skills",
+    "age",
+    "gender",
+    "about",
+    "photoUrl",
+  ];
+  const isAllowedUpdates = Object.keys(data).every((k) =>
+    allowedUpdates.includes(k)
+  );
+
+  return isAllowedUpdates;
 };

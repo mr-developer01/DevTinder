@@ -5,7 +5,7 @@ module.exports.userAuth = async (req, res, next) => {
     const { token } = req.cookies;
 
     if(!token){
-      throw new Error("Invalid request!!")
+      throw new Error("please login first!!")
     }
 
     const decodedData = await jwt.verify(token, "DEV@Tinder$3636");

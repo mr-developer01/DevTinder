@@ -57,7 +57,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       validate(val) {
         if (!["male", "female", "others"].includes(val)) {
-          throw new Error("Gender data is not valid");
+          throw new Error(`${val} is not a valid gender!`);
         }
       },
     },
@@ -65,7 +65,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       validate(val) {
         if (!validator.isURL(val)) {
-          throw new Error("Envalid email address: " + val);
+          throw new Error("Envalid image address: " + val);
         }
       },
     },

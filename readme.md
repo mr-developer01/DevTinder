@@ -5,3 +5,14 @@
 5. cookie-parser (for reading cookie, no need of cookie-parser for saving cookie on browser)
 6. JWT - JSON Web Token (contains header, payload and verify signature)
 7. add userSchema.method (schema methods)
+
+<!-- DevTinder API's -->
+# authRouter
+- post/signup✅
+- post/login✅
+- post/logout✅
+
+# profileRouter
+- get/profile/view✅
+- patch/profile/edit
+- patch/profile/password
