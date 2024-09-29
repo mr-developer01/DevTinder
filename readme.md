@@ -20,3 +20,10 @@
 # connectionRequestRouter
 - Post /request/send/:status/:toUserId✅
 - Post /request/review/:status/:requestId✅
+
+# userRouter
+- Get /user/request/received✅
+- Get /user/requests
+
+
+status: ignored, interested, accepted, rejected
