@@ -8,11 +8,15 @@
 
 <!-- DevTinder API's -->
 # authRouter
-- post/signup✅
-- post/login✅
-- post/logout✅
+- Post /signup✅
+- Post /login✅
+- Post /logout✅
 
 # profileRouter
-- get/profile/view✅
-- patch/profile/edit
-- patch/profile/password
+- Get /profile/view✅
+- Patch /profile/edit✅
+- Patch /profile/password✅
+
+# connectionRequestRouter
+- Post /request/send/:status/:toUserId✅
+- Post /request/review/:status/:requestId✅

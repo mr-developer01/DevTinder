@@ -41,24 +41,27 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
   }
 });
 
-profileRouter.patch("/profile/editPassword", userAuth, async (req, res) => {
+profileRouter.patch("/profile/password", userAuth, async (req, res) => {
   try {
-    const user = req.user;
 
-    const data = req.body;
+    const {emailId, password} = req.body;
 
-    const allowUpdate = ["password"];
+    const checkUser = await userModel.findOne({emailId});
 
-    const isAllowedData = Object.keys(data).every((k) =>
+    if(!checkUser) throw new Error("Invalid cradentioals!!")
+
+    const allowUpdate = ["emailId", "password"];
+
+    const isAllowedData = Object.keys(req.body).every((k) =>
       allowUpdate.includes(k)
     );
 
-    if(!isAllowedData) throw new Error("add new password only!!")
+    if(!isAllowedData) throw new Error("Invalid cradentioals!!")
 
-    const newHashPassword = await bcrypt.hash(data.password, 10);
+    const newHashPassword = await bcrypt.hash(password, 10);
 
-    const loggedInUser = await userModel.findByIdAndUpdate(
-      { _id: user._id },
+    const loggedInUser = await userModel.findOneAndUpdate(
+      { emailId },
       { password: newHashPassword },
       {
         returnDocument: "after",
@@ -67,7 +70,7 @@ profileRouter.patch("/profile/editPassword", userAuth, async (req, res) => {
     );
 
     res.status(201).json({
-      message: `${user.firstName} your password is updated!`,
+      message: `${loggedInUser.firstName} your password is updated!`,
       data: loggedInUser,
     });
   } catch (error) {
