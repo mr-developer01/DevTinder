@@ -23,7 +23,8 @@
 
 # userRouter
 - Get /user/request/received✅
-- Get /user/requests
+- Get /user/requests✅
+- Get /user/feed✅
 
 
 status: ignored, interested, accepted, rejected
