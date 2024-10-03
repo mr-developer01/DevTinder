@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const bcrypt = require("bcrypt")
-const jwt = require("jsonwebtoken")
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const userSchema = new mongoose.Schema(
   {
@@ -83,11 +83,14 @@ const userSchema = new mongoose.Schema(
 userSchema.pre("save", function (next) {
   if (!this.photoUrl) {
     if (this.gender === "male") {
-      this.photoUrl = "https://example.com/male-default.png";
+      this.photoUrl =
+        "https://www.pngall.com/wp-content/uploads/5/User-Profile-PNG.png";
     } else if (this.gender === "female") {
-      this.photoUrl = "https://example.com/female-default.png";
+      this.photoUrl =
+        "https://p.kindpng.com/picc/s/421-4212792_member-icon-female-png-download-anonymous-profile-transparent.png";
     } else {
-      this.photoUrl = "https://example.com/neutral-default.png"; // For other cases
+      this.photoUrl =
+        "https://static.vecteezy.com/system/resources/thumbnails/020/911/746/small_2x/user-profile-icon-profile-avatar-user-icon-male-icon-face-icon-profile-icon-free-png.png"; // For other cases
     }
   }
   next();

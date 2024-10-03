@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 
 authRouter.post("/signup", async (req, res) => {
   try {
-    const { firstName, lastName, emailId, password, skills, age, gender } =
+    const { firstName, lastName, emailId, password, skills, age, gender, photoUrl } =
       req.body;
     // validation of data:--
     signupValidation(req);
@@ -22,6 +22,7 @@ authRouter.post("/signup", async (req, res) => {
       skills,
       age,
       gender,
+      photoUrl
     });
     res.send("User added successfully");
   } catch (error) {
@@ -51,12 +52,12 @@ authRouter.post("/login", async (req, res) => {
 
       // adding token to cookie
       res.cookie("token", token, { maxAge: 60000 * 60 * 24 * 7 });
-      res.send("Login successfully!");
+      res.json({message: "Login successfuly!", loginUser: user});
     } else {
       throw new Error("Invalid credentials.");
     }
   } catch (error) {
-    res.status(400).send("ERROR : " + error.message);
+    res.status(400).send(error.message);
   }
 });
 
