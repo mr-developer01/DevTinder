@@ -49,7 +49,7 @@ module.exports.signupValidation = (req) => {
 module.exports.profileUpdateValidation = (req) => {
   const data = req.body;
 
-  if (data?.skills.length > 10) throw new Error("Skills must be less than 10");
+  if (data?.skills.length < 2 || data?.skills.length > 10) throw new Error("Skills must be 2 to 10");
 
   const userSkill = data?.skills;
   userSkill.forEach((skill) => {
