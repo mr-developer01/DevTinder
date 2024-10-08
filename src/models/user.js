@@ -72,6 +72,7 @@ const userSchema = new mongoose.Schema(
     about: {
       type: String,
       default: "Write something about you!!",
+      maxLength: [255, "Keep your words around 255..."],
     },
     skills: {
       type: [String],

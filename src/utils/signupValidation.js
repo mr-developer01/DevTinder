@@ -2,7 +2,7 @@ const validator = require("validator");
 const { sociallyRestrictedSkills } = require("./mockData");
 
 module.exports.signupValidation = (req) => {
-  const { firstName, lastName, emailId, password, skills, age, gender } =
+  const { firstName, lastName, emailId, password } =
     req.body;
 
   if (!firstName || firstName.trim() === "")
@@ -27,23 +27,23 @@ module.exports.signupValidation = (req) => {
       "Please provide a valid password with the required strength."
     );
 
-  if (!age || isNaN(age)) throw new Error("Please provide your age.");
+  // if (!age || isNaN(age)) throw new Error("Please provide your age.");
 
-  if (!gender || gender.trim() === "")
-    throw new Error("Please specify your gender.");
+  // if (!gender || gender.trim() === "")
+  //   throw new Error("Please specify your gender.");
 
-  if (!skills || skills.length === 0) {
-    throw new Error("Please provide at least one skill.");
-  }
+  // if (!skills || skills.length === 0) {
+  //   throw new Error("Please provide at least one skill.");
+  // }
 
-  if (skills.length > 10) throw new Error("Skills must be less than 10");
+  // if (skills.length > 10) throw new Error("Skills must be less than 10");
 
-  skills.forEach((skill) => {
-    const isSkillPresent = sociallyRestrictedSkills.includes(
-      skill.toLowerCase()
-    );
-    if (isSkillPresent) throw new Error(`You can't add skills like ${skill}`);
-  });
+  // skills.forEach((skill) => {
+  //   const isSkillPresent = sociallyRestrictedSkills.includes(
+  //     skill.toLowerCase()
+  //   );
+  //   if (isSkillPresent) throw new Error(`You can't add skills like ${skill}`);
+  // });
 };
 
 module.exports.profileUpdateValidation = (req) => {
